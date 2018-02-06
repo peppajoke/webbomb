@@ -12,17 +12,17 @@ const ACTION = 'action';
 
 $appName = '';
 $actionName = '';
-if (!isset($_GET[APP])) {
-  $_GET[APP] = 'home';
+if (!isset($_REQUEST[APP])) {
+  $_REQUEST[APP] = 'home';
 }
 
 if (!isset($_GET[ACTION])) {
-  $_GET[ACTION] = 'index';
+  $_REQUEST[ACTION] = 'index';
 }
 
-$controller = \webBomb\factories\controller_factory::getController($_GET[APP]);
+$controller = \webBomb\factories\controller_factory::getController($_REQUEST[APP]);
 
-$response = $controller->performAction($_GET[ACTION], $_GET);
+$response = $controller->performAction($_REQUEST[ACTION], $_REQUEST);
 
 if ($response instanceof \webBomb\interfaces\i_view) {
   echo $response->render();

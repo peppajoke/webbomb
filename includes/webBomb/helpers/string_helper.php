@@ -33,4 +33,17 @@ class string_helper {
   public static function toForwardSlash(string $string) : string {
     return str_replace('\\','/', $string);
   }
+
+  public static function getAppUrl(string $app = 'home', string $action = 'index', array $parameters = []) {
+    $url = '/app.php?app=' . $app . '&action=' . $action;
+    foreach ($parameters as $key => $value) {
+      $url .= '&' . $key . '=' . $value;
+    }
+    return $url;
+  }
+
+  public static function encodePassword(string $password) {
+
+  }
+
 }
