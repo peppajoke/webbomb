@@ -14,5 +14,4 @@ class user extends entity_model {
   public $username;
   public $password;
   public $email;
-
 }

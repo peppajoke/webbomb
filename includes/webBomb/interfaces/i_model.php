@@ -9,6 +9,6 @@
 namespace webBomb\interfaces;
 
 interface i_model {
-  public function load();
+  public function load($params);
   public function save();
 }

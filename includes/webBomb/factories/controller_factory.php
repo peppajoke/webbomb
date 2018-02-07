@@ -20,7 +20,7 @@ class controller_factory {
     return new $controllerName;
   }
 
-  public static function getAllControllers() : array {
+  public static function getAllLayoutControllers() : array {
     $controllerNames = [];
     $path = site_helper::getIncludesPath() . site_helper::getConfigProperty('appNamespace') . '/controllers/';
     $absolutePath = realpath($path);
@@ -29,7 +29,7 @@ class controller_factory {
       if (string_helper::stringEndsWith($fileName, '_controller.php')) {
         $className = string_helper::controllerFileToClassName($fileName);
         $reflection = new \ReflectionClass($className);
-        if (!$reflection->isAbstract()) {
+        if (!$reflection->isAbstract() && $reflection->getMethod('show_index_link_in_layout')->invoke($reflection->newInstance())) {
           $controllerNames[] = $fileName;
         }
       }

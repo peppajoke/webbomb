@@ -9,6 +9,7 @@
 namespace webBomb\models;
 
 
+use ReflectionClass;
 use ReflectionObject;
 use ReflectionProperty;
 use webBomb\database\daos\auto_sql_entity_dao;
@@ -19,15 +20,19 @@ class entity_model extends model implements i_entity_model {
   public $id;
 
   public function __construct() {
-    $this->dao = new auto_sql_entity_dao();
+    $this->dao = new auto_sql_entity_dao((new ReflectionClass($this))->getShortName());
   }
 
-  public function load() {
-    $this->dao->loadById($this->id);
+  public function load($params) {
+    $this->populate($this->dao->load($params));
   }
 
-  public function save() {
-    $this->dao->save($this);
+  public function save() : bool {
+    return $this->dao->save($this);
+  }
+
+  public function delete($params) : bool {
+    return $this->dao->delete($params);
   }
 
   public function getId() {
@@ -43,7 +48,12 @@ class entity_model extends model implements i_entity_model {
   }
 
   protected function getAllPublicProperties() {
-    return (new ReflectionObject($this))->getProperties(ReflectionProperty::IS_PUBLIC);
+    return array_map(
+      function ($prop) {
+        return $prop->getName();
+      },
+      (new ReflectionObject($this))->getProperties(ReflectionProperty::IS_PUBLIC)
+    );
   }
 
   public function getIdColumnName() {

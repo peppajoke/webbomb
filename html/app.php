@@ -6,7 +6,7 @@ ini_set('display_errors', 1);
 require_once('../includes/autoloader.php');
 
 \webBomb\helpers\site_helper::setConfig();
-
+\webBomb\auth\session::mountUserSession();
 const APP = 'app';
 const ACTION = 'action';
 

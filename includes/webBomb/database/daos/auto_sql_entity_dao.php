@@ -29,8 +29,7 @@ class auto_sql_entity_dao extends dao implements i_entity_dao {
   }
 
   public function load(array $params): array {
-    $sql = 'SELECT TOP 1 * FROM ' . $this->tableName . ' WHERE ';
-    $params = [];
+    $sql = 'SELECT * FROM ' . $this->tableName . ' WHERE ';
     $counter = 0;
     foreach ($params as $name => $value) {
       if ($counter > 0) {
@@ -39,7 +38,12 @@ class auto_sql_entity_dao extends dao implements i_entity_dao {
       $sql .= $name . ' = :' . $name;
       $params[$name] = $value;
     }
-    return $this->read($sql, $params);
+    $sql .= ' LIMIT 1;';
+    $results = $this->read($sql , $params);
+    if (empty($results)) {
+      return [];
+    }
+    return $results[0];
   }
 
   public function save(i_entity_model $model): bool {
@@ -69,7 +73,7 @@ class auto_sql_entity_dao extends dao implements i_entity_dao {
     if ($count === 0) {
       return false;
     }
-    return $this->write($sql, $params);
+    return $this->write($sql . ';', $params);
   }
 
 
@@ -86,6 +90,25 @@ class auto_sql_entity_dao extends dao implements i_entity_dao {
       $count++;
     }
     $sql .= ' WHERE ' . $model->getIdColumnName() . ' = :' . $model->getId();
+
+    if ($count === 0) {
+      return false;
+    }
+    return $this->write($sql, $params);
+  }
+
+  public function delete(array $args) : bool {
+    $sql = 'DELETE FROM ' . $this->tableName . ' WHERE ';
+    $count = 0;
+    $params = [];
+    foreach ($args as $columnName => $value) {
+      if ($count > 0) {
+        $sql .= ' AND ';
+      }
+      $sql .= $columnName . ' = :' . $columnName;
+      $params[$columnName] = $value;
+      $count++;
+    }
 
     if ($count === 0) {
       return false;

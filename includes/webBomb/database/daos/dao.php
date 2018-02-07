@@ -21,7 +21,13 @@ abstract class dao {
     foreach ($params as $key => $value) {
       $pdo->bindValue(':' . $key, $value);
     }
-    return $pdo->execute();
+    if (!$pdo->execute()) {
+      echo 'SQL write error' . PHP_EOL;
+      echo $sql . PHP_EOL;
+      var_dump($pdo->errorInfo());
+      return false;
+    }
+    return true;
   }
 
   protected function read($sql, $params) : array {
@@ -32,6 +38,9 @@ abstract class dao {
     if ($pdo->execute()) {
       return $pdo->fetchAll();
     }
+    echo 'SQL read error' . PHP_EOL;
+    echo $sql . PHP_EOL;
+    var_dump($pdo->errorInfo());
     return [];
   }
 

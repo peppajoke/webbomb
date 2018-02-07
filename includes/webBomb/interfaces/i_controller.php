@@ -9,5 +9,6 @@
 namespace webBomb\interfaces;
 
 interface i_controller {
-  public function performAction(string $actionName, array $params);
+  public function performAction(string $actionName, array $params = []);
+  public function forward(string $appName = 'home', string $actionName = 'index', array $params = []);
 }

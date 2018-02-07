@@ -14,13 +14,15 @@ abstract class model implements i_model {
   protected $dao;
 
   public function populate(array $values) {
-    if (empty($values)) {
-      throw new \Exception('ERROR: Tried to populate a model with an empty values array.');
-    }
     foreach ($values as $name => $value) {
       if (property_exists($this, $name)) {
         $this->$name = $value;
       }
     }
   }
+
+  public function __sleep() {
+    return array_diff(array_keys(get_object_vars($this)), ['dao']);
+  }
+
 }
