@@ -27,8 +27,23 @@ class entity_model extends model implements i_entity_model {
     $this->populate($this->dao->load($params));
   }
 
-  public function save() : bool {
-    return $this->dao->save($this);
+  public function getSet($params) {
+    return $this->createArray($this->dao->loadSet($params));
+  }
+
+  protected function createArray($results) {
+    $set = [];
+    foreach ($results as $result) {
+      $className = get_class($this);
+      $model = new $className;
+      $model->populate($result);
+      $set[] = $model;
+    }
+    return $set;
+  }
+
+  public function save($columns = []) : bool {
+    return $this->dao->save($this, $columns);
   }
 
   public function delete($params) : bool {

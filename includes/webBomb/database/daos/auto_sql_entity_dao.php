@@ -8,6 +8,7 @@
 
 namespace webBomb\database\daos;
 
+use webBomb\database\connection;
 use webBomb\interfaces\i_entity_dao;
 use webBomb\interfaces\i_entity_model;
 
@@ -21,7 +22,7 @@ class auto_sql_entity_dao extends dao implements i_entity_dao {
   }
 
   protected function getConnection() {
-    return new \PDO('mysql:host=localhost;dbname=webbomb', 'webbomb', 'webbomb');
+    return connection::get();
   }
 
   public function loadById($id): array {
@@ -37,6 +38,7 @@ class auto_sql_entity_dao extends dao implements i_entity_dao {
       }
       $sql .= $name . ' = :' . $name;
       $params[$name] = $value;
+      $counter++;
     }
     $sql .= ' LIMIT 1;';
     $results = $this->read($sql , $params);
@@ -46,9 +48,26 @@ class auto_sql_entity_dao extends dao implements i_entity_dao {
     return $results[0];
   }
 
-  public function save(i_entity_model $model): bool {
+  public function loadSet(array $params) {
+    $sql = 'SELECT * FROM ' . $this->tableName . ' WHERE ';
+    $counter = 0;
+    foreach ($params as $name => $value) {
+      if ($counter > 0) {
+        $sql .= ' AND ';
+      }
+      $sql .= $name . ' = :' . $name;
+      $params[$name] = $value;
+    }
+    $results = $this->read($sql , $params);
+    if (empty($results)) {
+      return [];
+    }
+    return $results;
+  }
+
+  public function save(i_entity_model $model, $columnsToSave = []): bool {
     if ($model->existsInDatabase()) {
-      return $this->update($model);
+      return $this->update($model, $columnsToSave);
     }
     return $this->insert($model);
   }
@@ -77,11 +96,14 @@ class auto_sql_entity_dao extends dao implements i_entity_dao {
   }
 
 
-  protected function update(i_entity_model $model) : bool {
+  protected function update(i_entity_model $model, $columnsToSave = []) : bool {
     $sql = 'UPDATE ' . $this->tableName . ' SET ';
     $count = 0;
     $params = [];
-    foreach ($model->getNonIdColumnNames() as $columnName) {
+
+    $columnsToSave = empty($columnsToSave) ? $model->getNonIdColumnNames() : $columnsToSave;
+
+    foreach ($columnsToSave as $columnName) {
       if ($count > 0) {
         $sql .= ',';
       }
@@ -89,8 +111,8 @@ class auto_sql_entity_dao extends dao implements i_entity_dao {
       $params[$columnName] = $model->$columnName;
       $count++;
     }
-    $sql .= ' WHERE ' . $model->getIdColumnName() . ' = :' . $model->getId();
-
+    $sql .= ' WHERE ' . $model->getIdColumnName() . ' = :' . $model->getIdColumnName();
+    $params[$model->getIdColumnName()] = $model->getId();
     if ($count === 0) {
       return false;
     }

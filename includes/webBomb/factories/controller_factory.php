@@ -10,6 +10,8 @@ namespace webBomb\factories;
 
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use webBomb\auth\session;
+use webBomb\controllers\base\auth_controller;
 use webBomb\helpers\site_helper;
 use webBomb\helpers\string_helper;
 use webBomb\interfaces\i_controller;
@@ -29,7 +31,17 @@ class controller_factory {
       if (string_helper::stringEndsWith($fileName, '_controller.php')) {
         $className = string_helper::controllerFileToClassName($fileName);
         $reflection = new \ReflectionClass($className);
-        if (!$reflection->isAbstract() && $reflection->getMethod('show_index_link_in_layout')->invoke($reflection->newInstance())) {
+
+        if ($reflection->isAbstract()) {
+          continue;
+        }
+
+        $controller = $reflection->newInstance();
+
+        if (
+          (!$controller instanceof auth_controller || (session::getUser() && $controller->hasRequiredPermissions()))
+          && $reflection->getMethod('showIndexLinkInLayout')->invoke($controller)
+        ) {
           $controllerNames[] = $fileName;
         }
       }

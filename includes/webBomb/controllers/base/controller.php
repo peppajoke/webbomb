@@ -14,8 +14,8 @@ use webBomb\views\base\view;
 
 abstract class controller implements i_controller {
 
-  public abstract function index() : view;
-  public abstract function show_index_link_in_layout() : bool;
+  public abstract function index($params = []) : view;
+  public abstract function showIndexLinkInLayout() : bool;
 
   protected function preAction($params) {
 
@@ -25,18 +25,11 @@ abstract class controller implements i_controller {
 
   }
 
-  protected function userHasAccess() {
-    return true;
-  }
-
   public function forward(string $appName = 'home', string $actionName = 'index', array $params = []) {
     header('Location: ' . string_helper::getAppUrl($appName, $actionName, $params));
   }
 
   public function performAction(string $actionName, array $params = []) {
-    if (!$this->userHasAccess()) {
-      return; // todo: add login redirect
-    }
     $this->preAction($params);
     $output = $this->$actionName($params);
     $this->postAction($params);

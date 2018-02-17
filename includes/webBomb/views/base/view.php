@@ -8,11 +8,13 @@
 
 namespace webBomb\views\base;
 
+use webBomb\auth\session;
 use webBomb\interfaces\i_view;
 
 abstract class view implements i_view {
 
   protected $layoutView = null;
+  protected $user;
 
   public function __construct() {
     $layoutView = $this->layoutView();
@@ -20,6 +22,7 @@ abstract class view implements i_view {
       $layoutView->mainView = $this;
       $this->layoutView = $layoutView;
     }
+    $this->user = session::getUser();
   }
 
   public function render() : string {
@@ -36,7 +39,7 @@ abstract class view implements i_view {
 
   protected abstract function customJavascript() : string;
 
-  protected function renderCustomJavascript() {
+  public function renderCustomJavascript() {
     $customJavascript = $this->customJavascript();
     return !empty($customJavascript) ? '<script>' . $customJavascript . '</script>' : '';
   }

@@ -8,6 +8,11 @@
 
 namespace webBomb\auth;
 
+use webWars\models\lock_on;
+use webWars\models\unit;
+use webWars\models\user_permission;
+use webWars\models\user_resources;
+
 class session {
 
   public static function createSession(user $user) {
@@ -31,6 +36,19 @@ class session {
       $user = new user();
       $user->load(['id' => $userSession->userId]);
       if ($user->existsInDatabase()) {
+        $userPermissions = new user_permission();
+        $permissions = $userPermissions->getSet(['userId' => $user->id]);
+        $userResources = new user_resources();
+        $userResources->load(['userId' => $user->id]);
+        $heroUnit = new unit();
+        $heroUnit->load([ 'ownerId' => $user->id, 'hero' => 1 ]);
+        if (!$heroUnit->existsInDatabase()) {
+          $heroUnit = null;
+        }
+
+        $user->setHeroUnit($heroUnit);
+        $user->setPermissions($permissions);
+        $user->setResources($userResources);
         $GLOBALS['user'] = $user;
       }
     }

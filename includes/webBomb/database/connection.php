@@ -8,9 +8,14 @@
 
 namespace webBomb\database;
 
+use PDO;
+
 class connection {
-  public static function get(string $sqlString) {
-    $pdo = new \PDO('mysql:host=localhost;dbname=webbomb', 'webbomb', 'webbomb');
-    return $pdo->prepare($sqlString);
+
+  public static function get() {
+    if (!isset($GLOBALS['connection'])) {
+      $GLOBALS['connection'] = new \PDO('mysql:host=localhost;dbname=webbomb', 'webbomb', 'webbomb');
+    }
+    return $GLOBALS['connection'];
   }
 }

@@ -19,6 +19,11 @@ abstract class model implements i_model {
         $this->$name = $value;
       }
     }
+    $this->format();
+  }
+
+  protected function format() {
+
   }
 
   public function __sleep() {

@@ -10,7 +10,7 @@ namespace webBomb\views\auth;
 
 use webBomb\helpers\string_helper;
 use webBomb\views\base\view;
-use webBombSite\views\layout_view;
+use webWars\views\layout_view;
 
 class login_view extends view {
 
@@ -41,10 +41,10 @@ class login_view extends view {
       ' : '') . '
           <form action="' . string_helper::getAppUrl('login', 'login') . '" method="post">
             <div class="form-group">
-              <input pattern=".{4,}"   required title="4 characters minimum" type="text" class="form-control" id="login" name="login" placeholder="username or email address">
+              <input pattern=".{4,}" required title="4 characters minimum" type="text" class="form-control" id="login" name="login" placeholder="username or email address">
             </div>
             <div class="form-group">
-              <input pattern=".{8,}"   required title="8 characters minimum" type="password" class="form-control" id="password" name="password" placeholder="password">
+              <input pattern=".{8,}" required title="8 characters minimum" type="password" class="form-control" id="password" name="password" placeholder="password">
             </div>
             <button type="submit" class="btn btn-secondary">Login</button>
           </form>

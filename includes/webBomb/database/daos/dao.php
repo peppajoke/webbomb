@@ -16,7 +16,7 @@ abstract class dao {
     $this->connection = $this->getConnection();
   }
 
-  protected function write($sql, $params) : bool {
+  public function write($sql, $params) : bool {
     $pdo = $this->connection->prepare($sql);
     foreach ($params as $key => $value) {
       $pdo->bindValue(':' . $key, $value);
@@ -25,12 +25,13 @@ abstract class dao {
       echo 'SQL write error' . PHP_EOL;
       echo $sql . PHP_EOL;
       var_dump($pdo->errorInfo());
+      var_dump($params);
       return false;
     }
     return true;
   }
 
-  protected function read($sql, $params) : array {
+  public function read($sql, $params) : array {
     $pdo = $this->connection->prepare($sql);
     foreach ($params as $key => $value) {
       $pdo->bindValue(':' . $key, $value);

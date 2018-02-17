@@ -10,7 +10,7 @@ namespace webBomb\views\auth;
 
 use webBomb\helpers\string_helper;
 use webBomb\views\base\view;
-use webBombSite\views\layout_view;
+use webWars\views\layout_view;
 
 class register_view extends view {
 
@@ -33,15 +33,15 @@ class register_view extends view {
         ' . $this->errorMessage . '
       </div>
       ' : '') . '
-        <form action="' . string_helper::getAppUrl('register', 'register') . '" method="post">
+        <form autocomplete="off" action="' . string_helper::getAppUrl('register', 'register') . '" method="post">
           <div class="form-group">
-            <input pattern=".{4,}"   required title="4 characters minimum" type="text" class="form-control" id="login" name="username" placeholder="username">
+            <input pattern=".{4,}" autocomplete="off" required title="4 characters minimum" type="text" class="form-control" id="username" name="username" placeholder="username">
           </div>
           <div class="form-group">
-            <input pattern=".{4,}"   required title="4 characters minimum" type="email" class="form-control" id="login" name="email" placeholder="email address">
+            <input pattern=".{4,}" autocomplete="off" required title="4 characters minimum" type="email" class="form-control" id="email" name="email" placeholder="email address">
           </div>
           <div class="form-group">
-            <input pattern=".{8,}"   required title="8 characters minimum" type="password" class="form-control" id="password" name="password" placeholder="password">
+            <input pattern=".{8,}" autocomplete="off" required title="8 characters minimum" type="password" class="form-control" id="password" name="password" placeholder="password">
           </div>
           <button class="btn btn-secondary" type="submit" >Register</button>
         </form>
